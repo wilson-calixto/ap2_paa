@@ -1,55 +1,104 @@
-import numpy as np
 
-def solve_Knapsack_DP(weights,values,capacity):
-    n=len(weights)
-    valueFunction=np.zeros([n+1,capacity+1])
-    contentMatrix=np.zeros([n+1,capacity+1])
-    for i in range(1,n+1): # The item 0 considers the empty knapsack
-        for x in range(0,capacity+1):
-            if(x-weights[i-1]>=0):
+class Item(object):
+    def __init__(self, peso, valor):
+        self.peso = peso
+        self.valor = valor
 
-                valueFunction[i,x]=max(valueFunction[i-1,x],valueFunction[i-1,x-weights[i-1]]+values[i-1])
-                if(valueFunction[i-1,x]<valueFunction[i-1,x-weights[i-1]]+values[i-1]):
-                    contentMatrix[i,x]=1
-            else:
-                valueFunction[i,x]=valueFunction[i-1,x]
-    return valueFunction,contentMatrix          
-
-def disclosure_content(contentMatrix,weights):
-    [n,capacity]=np.shape(contentMatrix)
-    n=n-1
-    capacity=capacity-1
-    content=[]
-    k=capacity
-    for i in range(n,0,-1):
-        if(contentMatrix[i,k]==1):
-            content.append(i-1)
-            k=capacity-weights[i-1]                    
-    return content
-
-
-if __name__ == '__main__':
-
-
-    capacity=11
-#= 1; v2 = 6; v3 = 18; v4 = 22; v5 = 28;
-    weightList=[]
-    weightList.append(1)
-    weightList.append(2)
-    weightList.append(5)
-    weightList.append(6)
-    weightList.append(7)
+    def get_peso(self):
+        return self.peso
     
+    def get_valor(self):
+        return self.valor
 
-#w1 = 1; w2 = 2; w3 = 5; w4 = 6; w5 = 7; W = 11.
-    valueList=[]
-    valueList.append(1)
-    valueList.append(6)
-    valueList.append(18)
-    valueList.append(22)
-    valueList.append(28)
+
+def partition(list, start, end):
+    pivot = list[end]
+    bottom = start-1
+    top = end
+
+    done = 0
+    while not done:
+
+        while not done:
+            bottom = bottom + 1
+
+            if bottom == top:
+                done = 1
+                break
+
+            if list[bottom].get_valor() > pivot.get_valor():
+                list[top] = list[bottom]
+                break
+
+        while not done:
+            top = top-1
+
+            if top == bottom:
+                done = 1
+                break
+
+            if list[top].get_valor() < pivot.get_valor():
+                list[bottom] = list[top]
+                break
+
+    list[top] = pivot
+    return top
+
+def quicksort(list, start, end):
+   if start < end:
+        split = partition(list, start, end)
+        quicksort(list, start, split-1)
+        quicksort(list, split+1, end)
+   else:
+        return
+
+
+def guloso(capacidade,valor_minimo_de_peso,itens):
+    peso_livre_corrente=capacidade
+    melhor_solução=0
+    start = 0
+    end = len(itens)-1
+    quicksort(itens,start,end)
+    itens=itens[::-1]
+    solução=[]
+    #completa vetor
+    for i in range(len(itens)):
+        solução.append(0)
+    i=0
+    while(i<len(itens)):
+
+        if(itens[i].get_peso()<=peso_livre_corrente):
+            peso_livre_corrente=peso_livre_corrente-itens[i].get_peso()
+            solução[i]=1
+            melhor_solução=melhor_solução+itens[i].get_valor()        
+        i+=1
+    if(melhor_solução>=valor_minimo_de_peso):
+        return solução[::-1]
+    else:
+        return None
     
-[valueFunction,contentMatrix]= solve_Knapsack_DP(weightList,valueList,capacity)  
-print (valueFunction)
-print (contentMatrix)
-print (disclosure_content(contentMatrix,weightList))
+if __name__=="__main__":
+    #completa vetor
+    
+    itens=[]
+    item=Item(1,1)
+    itens.append(item)
+    item=Item(2,6)
+    itens.append(item)
+    item=Item(5,18)
+    itens.append(item)
+    item=Item(6,22)
+    itens.append(item)
+    item=Item(7,28)
+    itens.append(item)
+    
+    capacidade=11
+    valor_minimo_de_peso=0
+    resposta=guloso(capacidade,valor_minimo_de_peso,itens)
+
+  
+    print("val:peso")
+    for i in itens:
+        print(i.get_valor()," : ", i.get_peso())
+    print("resposta")
+    print(resposta)        
