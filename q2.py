@@ -13,7 +13,7 @@ def solve_Knapsack_DP(weights,values,capacity):
                     contentMatrix[i,x]=1
             else:
                 valueFunction[i,x]=valueFunction[i-1,x]
-    return valueFunction,contentMatrix          
+    return valueFunction,contentMatrix           
 
 def disclosure_content(contentMatrix,weights):
     [n,capacity]=np.shape(contentMatrix)
@@ -51,5 +51,25 @@ if __name__ == '__main__':
     
 [valueFunction,contentMatrix]= solve_Knapsack_DP(weightList,valueList,capacity)  
 print (valueFunction)
-print (contentMatrix)
-print (disclosure_content(contentMatrix,weightList))
+v=disclosure_content(contentMatrix,weightList)
+print(v)
+cap=valueFunction[-1][-1]#deixar gererico
+print("gdsuygfsd ",cap)
+for i in range(len(v)):
+    if(cap-valueList[v[i]]>=0):
+        cap=cap-valueList[v[i]]
+    else:
+        v[i]=-1
+if(v[-1]==-1):
+    v.pop(-1)
+if(v[-1]==-1):
+    v.pop(-1)
+if(v[-1]==-1):
+    v.pop(-1)
+   
+             
+print(v)
+    
+for i in v:
+    print(valueList[i])
+    print(weightList[i])
