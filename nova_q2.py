@@ -1,39 +1,39 @@
 import numpy as np
 
-def solve_Knapsack_DP(weights,values,capacity):
-    n=len(weights)
-    valueFunction=np.zeros([n+1,capacity+1])
-    contentMatrix=np.zeros([n+1,capacity+1])
+def resolve_mochila(pesos,valores,capacidade):
+    n=len(pesos)
+    matriz_de_valores=np.zeros([n+1,capacidade+1])
+    matriz_de_marcacao=np.zeros([n+1,capacidade+1])
     for i in range(1,n+1): # The item 0 considers the empty knapsack
-        for x in range(0,capacity+1):
-            if(x-weights[i-1]>=0):
+        for x in range(0,capacidade+1):
+            if(x-pesos[i-1]>=0):
 
-                valueFunction[i,x]=max(valueFunction[i-1,x],valueFunction[i-1,x-weights[i-1]]+values[i-1])
-                if(valueFunction[i-1,x]<valueFunction[i-1,x-weights[i-1]]+values[i-1]):
-                    contentMatrix[i,x]=1
+                matriz_de_valores[i,x]=max(matriz_de_valores[i-1,x],matriz_de_valores[i-1,x-pesos[i-1]]+valores[i-1])
+                if(matriz_de_valores[i-1,x]<matriz_de_valores[i-1,x-pesos[i-1]]+valores[i-1]):
+                    matriz_de_marcacao[i,x]=1
             else:
-                valueFunction[i,x]=valueFunction[i-1,x]
-    return valueFunction,contentMatrix           
+                matriz_de_valores[i,x]=matriz_de_valores[i-1,x]
+    return matriz_de_valores,matriz_de_marcacao           
 
-def disclosure_content(contentMatrix,weights):
-    [n,capacity]=np.shape(contentMatrix)
+def de_matriz_pra_indice(matriz_de_marcacao,pesos):
+    [n,capacidade]=np.shape(matriz_de_marcacao)
     n=n-1
-    capacity=capacity-1
-    content=[]
-    k=capacity
+    capacidade=capacidade-1
+    vetor_resposta=[]
+    k=capacidade
     for i in range(n,0,-1):
-        if(contentMatrix[i,k]==1):
-            content.append(i-1)
-            k=capacity-weights[i-1]                    
-    return content
+        if(matriz_de_marcacao[i,k]==1):
+            vetor_resposta.append(i-1)
+            k=capacidade-pesos[i-1]                    
+    return vetor_resposta
 
 
 
-weightList=[]
+lista_de_pesos=[]
 
-codeList=[]
+lista_de_codigos=[]
 
-valueList=[]
+lista_de_valores=[]
 
 
 tam=int(input())
@@ -41,33 +41,37 @@ for i in range(tam):
     l=str(input())
     lista=[]
     lista=l.split(' ')
-    codeList.append(lista[0])
-    peso=float(lista[1])
-    weightList.append(int(peso))
-    va=float(lista[2])
-    valueList.append(round(int(va)))
+    lista_de_codigos.append(lista[0])
+    numero=int(lista[1])
+    lista_de_pesos.append(numero)
+    numero1=float(lista[2])
+    numero1=int(numero1)
+    lista_de_valores.append(numero1)
     #novo_peso=rendimento/peso*100
     
-capacity=100000
+capacidade=100000
 
     
     
-[valueFunction,contentMatrix]= solve_Knapsack_DP(weightList,valueList,capacity)  
-print (valueFunction)
-v=disclosure_content(contentMatrix,weightList)
-print(v)
-cap=valueFunction[-1][-1]#deixar gererico
-print("gdsuygfsd ",cap)
+[matriz_de_valores,matriz_de_marcacao]= resolve_mochila(lista_de_pesos,lista_de_valores,capacidade)  
+v=de_matriz_pra_indice(matriz_de_marcacao,lista_de_pesos)
+
+cap=matriz_de_valores[-1][-1]
+
 for i in range(len(v)):
-    if(cap-valueList[v[i]]>=0):
-        cap=cap-valueList[v[i]]
+    if(cap-lista_de_valores[v[i]]>=0):
+        cap=cap-lista_de_valores[v[i]]
     else:
         v[i]=-1
 
-
              
-print(v)
-    
+
+resp=[]    
 for i in v:
-   if(i!=-1):
-     print(codeList[i])
+    if(i!=-1):
+       resp.append(lista_de_codigos[i]) 
+
+resp.sort()
+
+for i in resp:
+    print(i)
