@@ -69,5 +69,5 @@ for i in range(len(v)):
 print(v)
     
 for i in v:
-   if(codeList[i]!=-1):
+   if(i!=-1):
      print(codeList[i])
